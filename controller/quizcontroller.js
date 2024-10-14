@@ -1,5 +1,7 @@
+const { message } = require("statuses");
 const Quiz = require("../model/quizschema");
 const quizschema = require("../model/quizschema");
+const User = require("../model/usermodel");
 
 
 
@@ -54,8 +56,30 @@ const getQuizbyId = async (request,response)=>{
 
 
 
+const updatescore = async (request,response)=>{
+    const{score}=request.body
+    try {
+        const user = await User.findById(request.user._id)
+        user.totalScore +=score;
+        await user.save()
+        response.status(200).json({message:"Score updated successfully"})
+    } catch (error) {
+        response.status(500).json({message:error.message})
+    }
+}
 
 
+const leaderboard = async(request,response)=>{
+    try {
+        const leaderboard = await User.find()
+          .sort({ totalScore: -1 })
+         .limit(10)
+          .select('name employee_id totalScore -_id');
+        response.status(200).json(leaderboard);
+      } catch (error) {
+        res.status(500).json({ message: error.message });
+      }
+}
 
 
 
@@ -64,7 +88,9 @@ const getQuizbyId = async (request,response)=>{
 module.exports = {
     createQuiz,
     getallQuiz,
-    getQuizbyId
+    getQuizbyId,
+    leaderboard,
+    updatescore
 }
 
 

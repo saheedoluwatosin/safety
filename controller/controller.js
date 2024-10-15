@@ -30,6 +30,9 @@ const register = async (request,response)=>{
         const hashedpassword = await bcrypt.hash(password,12)
         const newuser = new User({name,employee_id,password:hashedpassword})
         await newuser.save()
+        return response.status(200).json({
+            message:"Successful"
+        })
     } catch (error) {
         return response.status(500).json({message: error.message})
     }

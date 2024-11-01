@@ -73,7 +73,7 @@ const leaderboard = async(request,response)=>{
     try {
         const leaderboard = await User.find()
           .sort({ totalScore: -1 })
-         .limit(10)
+         .limit(100)
           .select('name employee_id totalScore -_id');
         response.status(200).json(leaderboard);
       } catch (error) {
@@ -83,6 +83,48 @@ const leaderboard = async(request,response)=>{
 
 
 
+const getalluser = async(request,response)=>{
+    const users = await User.find()
+    response.status(200).json({
+        "message":"All user",
+        users
+    })
+}
+
+
+const deleteuser = async(request,response)=>{
+    const {id} = request.params
+    const user = await User.findByIdAndDelete(id)
+    if(!user){
+        return response.status(404).json({
+            "message":"User not found" 
+        }) 
+
+    }
+
+    return response.status(200).json({
+        "message":"User deleted"
+    })
+
+}
+
+
+
+const deletequiz = async(request,response) =>{
+    const {id} = request.params
+    const quiz = await Quiz.findByIdAndDelete(id)
+    if(!quiz){
+        return response.status(400).json({
+            "message":"user not found"
+        })
+    }
+
+    return response.status(200).json({
+        "message":"Quiz deleted"
+    })
+
+}
+
 
 
 module.exports = {
@@ -90,7 +132,10 @@ module.exports = {
     getallQuiz,
     getQuizbyId,
     leaderboard,
-    updatescore
+    updatescore,
+    getalluser,
+    deleteuser,
+    deletequiz
 }
 
 
